@@ -4,9 +4,9 @@ from openai import AzureOpenAI
 class GptEvaluation:
     def __init__(self):
         # Azure OpenAI 클라이언트 초기화
-        self.endpoint = os.getenv("ENDPOINT_URL", "Notion 참고")
-        self.deployment = os.getenv("DEPLOYMENT_NAME", "Notion 참고")
-        self.subscription_key = os.getenv("AZURE_OPENAI_API_KEY", " Notion 참고")  # 올바른 API 키로 설정
+        self.endpoint = os.getenv("OPENAI_ENDPOINT_URL")
+        self.deployment = os.getenv("DEPLOYMENT_NAME")
+        self.subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
 
         self.client = AzureOpenAI(  
             azure_endpoint=self.endpoint,  
@@ -28,6 +28,7 @@ class GptEvaluation:
                             "1~10퍼센트는 90점, 11~20퍼센트면 80점, "
                             "21~30퍼센트면 70점을 주는 선생님이야. "
                             "그 점수와 단어가 수정된 올바른 문장을 같이 말해줘야 해."
+                            "그리고 대소문자 구분은 채점 기준에 넣지말고 평가해줘."
                         )
                     }
                 ]
