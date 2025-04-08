@@ -3,14 +3,15 @@ import os
 from pydantic import BaseModel
 from service.pronunciation_evaluation import PronunciationEvaluator
 from service.speech_to_text import SpeechToTextConverter
-from service.gpt_evaluation import GptEvaluation 
-
+from service.gpt_evaluation import GptEvaluation
+from dotenv import load_dotenv
+from openai import AzureOpenAI
 
 app = FastAPI()
+load_dotenv()
 
-# Azure Speech 서비스 서브스크립션 키와 서비스 리전 설정
-subscription_key = "Notion 참고"
-service_region = "Notion 참고"
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+service_region = os.getenv("AZURE_SERVICE_REGION")
 
 # 발음 평가
 evaluator = PronunciationEvaluator(subscription_key, service_region)
@@ -65,8 +66,6 @@ async def evaluate_text(request: TextEvaluationRequest):
     except Exception as e:
         # 오류 발생 시 적절한 HTTP 상태와 메시지 반환
         raise HTTPException(status_code=500, detail=str(e))
-
-
 
 
 if __name__ == "__main__":
