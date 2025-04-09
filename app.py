@@ -15,8 +15,9 @@ service_region = os.getenv("AZURE_SERVICE_REGION")
 
 # 발음 평가
 evaluator = PronunciationEvaluator(subscription_key, service_region)
+
 @app.post("/evaluate-pronunciation/")
-async def evaluate_pronunciation(file: UploadFile = File(...)):
+async def evaluate_pronunciation(reference_text: str, file: UploadFile = File(...)):
     file_location = f"./{file.filename}"
     
     # 파일 저장
@@ -24,16 +25,20 @@ async def evaluate_pronunciation(file: UploadFile = File(...)):
         buffer.write(await file.read())
 
     # 발음 평가
-    reference_text = ""  # 여기에 평가할 참조 텍스트 추가
-    result = await evaluator.evaluate_pronunciation(file_location, reference_text)
+    pronunciation_result = await evaluator.evaluate_pronunciation(file_location, reference_text)
 
     # 임시 파일 삭제
     os.remove(file_location)
 
-    return result
+    # 발음 평가 결과를 포함한 리턴 값
+    return {
+        "pronunciation_score": pronunciation_result.get('pronunciation_score', 'N/A'),
+        "fluency_score": pronunciation_result.get('fluency_score', 'N/A')
+    }
 
 # STT 변환
 converter = SpeechToTextConverter(subscription_key, service_region)
+
 @app.post("/convert-speech-to-text/")
 async def convert_speech_to_text(file: UploadFile = File(...)):
     file_location = f"./{file.filename}"
@@ -55,18 +60,21 @@ class TextEvaluationRequest(BaseModel):
 
 # GPT -> 문법 평가
 gpt_evaluator = GptEvaluation()
+
 @app.post("/evaluate-text/")
-async def evaluate_text(request: TextEvaluationRequest):
+async def evaluate_text(request: TextEvaluationRequest, pronunciation_score: str = None, fluency_score: str = None):
     try:
-        # GptEvaluation을 사용하여 텍스트를 평가
-        completion = gpt_evaluator.evaluate_text(request.text)
+        # 발음 평가 결과가 있을 경우 이를 사용
+        pronunciation_text = f"발음 평가 점수: {pronunciation_score if pronunciation_score else 'N/A'}, 유창성 점수: {fluency_score if fluency_score else 'N/A'}"
+        
+        evaluation_text = request.text + " " + pronunciation_text
+        completion = gpt_evaluator.evaluate_text(evaluation_text)
+
         return {
             "evaluation": completion
         }
     except Exception as e:
-        # 오류 발생 시 적절한 HTTP 상태와 메시지 반환
         raise HTTPException(status_code=500, detail=str(e))
-
 
 if __name__ == "__main__":
     import uvicorn
