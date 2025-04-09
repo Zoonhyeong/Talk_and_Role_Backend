@@ -1,0 +1,15 @@
+# NPC의 바운더리에 진입했을 때의 이벤트
+restaurant_events = [
+    "\"Owner\" : \"Get a table assignment\"",
+    "\"Waiter\" : \"place an order from on menu\"",
+    "\"Owner\" : \"Make a payment\""
+]
+
+scene_hash_map = {
+    'restaurent' : 0,
+    'airplane' : 0,
+    'plane' : 0
+}
+
+restaurant_events[scene_hash_map.get('restaurent')]
+scene_hash_map.get('restaurent') += 1

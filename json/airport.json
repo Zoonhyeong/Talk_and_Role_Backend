@@ -1,0 +1,21 @@
+{
+  "user_info": {
+    "nationality": "South Korea",
+    "age": 25,
+    "occupation": "Student",
+    "native_language": "Korean"
+  },
+  "learning_info": {
+    "target_country": "Canada",
+    "target_language": "English"
+  },
+  "learning_mode": "Easy",
+  "roleplay_setting": {
+    "location": "Airport",
+    "NPC_role_and_quest": {
+      "Immigration_officer": "immigration conversation",
+      "Taxi_driver": "destination conversation"
+    },
+    "user_role": "Passenger"
+  }
+}

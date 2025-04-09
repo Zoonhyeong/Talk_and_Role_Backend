@@ -1,0 +1,22 @@
+{
+  "user_info": {
+    "nationality": "South Korea",
+    "age": 25,
+    "occupation": "Student",
+    "native_language": "Korean"
+  },
+  "learning_info": {
+    "target_country": "Canada",
+    "target_language": "English"
+  },
+  "learning_mode": "Easy",
+  "roleplay_setting": {
+    "location": "Plane",
+    "NPC_role_and_quest": {
+      "Stewardess": "seat guide",
+      "Standing_passenger": "get out of the way",
+      "Sitting_passenger": "moving seats"
+    },
+    "user_role": "Passenger"
+  }
+}

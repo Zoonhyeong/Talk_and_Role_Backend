@@ -1,0 +1,21 @@
+{
+  "user_info": {
+    "nationality": "South Korea",
+    "age": 25,
+    "occupation": "Student",
+    "native_language": "Korean"
+  },
+  "learning_info": {
+    "target_country": "Canada",
+    "target_language": "English"
+  },
+  "learning_mode": "Easy",
+  "roleplay_setting": {
+    "location": "Restaurant",
+    "NPC_role_and_quest": {
+      "Waiter": "place an order from on (menu = {'main dish' : {'pasta' : ['arrabbiata spaghetti', 'mushroom cream'], 'pizza' : ['margherita', 'gorgonzola'], 'steak' : 'marinated steak', 'drink' : ['coffee', 'wine', 'juice', 'ade', 'soda'], 'dessert' : ['tiramisu', 'coconut cream pudding', 'chocolate brownie']})",
+      "Owner": ["get a table assignment", "make a payment"]
+    },
+    "user_role": "Customer"
+  }
+}
