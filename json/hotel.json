@@ -1,0 +1,24 @@
+{
+  "user_info": {
+    "nationality": "South Korea",
+    "age": 25,
+    "occupation": "Student",
+    "native_language": "Korean"
+  },
+  "learning_info": {
+    "target_country": "Canada",
+    "target_language": "English"
+  },
+  "learning_mode": "Easy",
+  "roleplay_setting": {
+    "location": "Hotel",
+    "NPC_role_and_quest": {
+      "Front Desk": [
+        "check-in and luggage",
+        "obtaining Wi-Fi information",
+        "request for amenity"
+      ]
+    },
+    "user_role": "Guest"
+  }
+}
