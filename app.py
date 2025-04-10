@@ -17,7 +17,7 @@ service_region = os.getenv("AZURE_SERVICE_REGION")
 evaluator = PronunciationEvaluator(subscription_key, service_region)
 
 @app.post("/evaluate-pronunciation/")
-async def evaluate_pronunciation(reference_text: str, file: UploadFile = File(...)):
+async def evaluate_pronunciation(reference_text: str, file: UploadFile):
     file_location = f"./{file.filename}"
     
     # 파일 저장
@@ -32,8 +32,10 @@ async def evaluate_pronunciation(reference_text: str, file: UploadFile = File(..
 
     # 발음 평가 결과를 포함한 리턴 값
     return {
+        "recognized": pronunciation_result.get('recognized'),
         "pronunciation_score": pronunciation_result.get('pronunciation_score', 'N/A'),
-        "fluency_score": pronunciation_result.get('fluency_score', 'N/A')
+        "fluency_score": pronunciation_result.get('fluency_score', 'N/A'),
+        "mispronunciation_words": pronunciation_result.get('mispronunciation_words', 'N/A'),
     }
 
 # STT 변환
@@ -65,9 +67,9 @@ gpt_evaluator = GptEvaluation()
 async def evaluate_text(request: TextEvaluationRequest, pronunciation_score: str = None, fluency_score: str = None):
     try:
         # 발음 평가 결과가 있을 경우 이를 사용
-        pronunciation_text = f"발음 평가 점수: {pronunciation_score if pronunciation_score else 'N/A'}, 유창성 점수: {fluency_score if fluency_score else 'N/A'}"
-        
-        evaluation_text = request.text + " " + pronunciation_text
+        pronunciation_score_info = f"발음 평가 점수: {pronunciation_score or 'N/A'}, 유창성 점수: {fluency_score or 'N/A'}"
+
+        evaluation_text = f"{request.text} {pronunciation_score_info}"
         completion = gpt_evaluator.evaluate_text(evaluation_text)
 
         return {
