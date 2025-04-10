@@ -26,9 +26,7 @@ class PronunciationEvaluator:
             return {
                 "recognized": result.text,
                 "pronunciation_score": pronunciation_result.pronunciation_score,
-                "accuracy_score": pronunciation_result.accuracy_score,
                 "fluency_score": pronunciation_result.fluency_score,
-                "completeness_score": pronunciation_result.completeness_score
             }
         elif result.reason == speechsdk.ResultReason.NoMatch:
             return {"error": "No speech could be recognized."}
