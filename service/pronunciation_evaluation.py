@@ -23,10 +23,30 @@ class PronunciationEvaluator:
         # 결과 처리
         if result.reason == speechsdk.ResultReason.RecognizedSpeech:
             pronunciation_result = speechsdk.PronunciationAssessmentResult(result)
+            
+            mispronunciation_words = []
+            monotone_words = []
+            intonation_data = []
+
+            # Words 리스트를 순회
+            for word_info in pronunciation_result.words:
+                # 잘못된 발음인지 여부 확인
+                if word_info.error_type == "Mispronunciation":
+                    mispronunciation_words.append(word_info.word)
+
+                # if "Intonation" in word_info.pronunciation_assessment.feedback.prosody:
+                #     intonation_data.append({
+                #         "word": word_info.word,
+                #         "intonation": word_info.pronunciation_assessment.feedback.prosody["Intonation"]
+                #     })
+                # print(intonation_data)
+
+            # 결과 출력
             return {
                 "recognized": result.text,
                 "pronunciation_score": pronunciation_result.pronunciation_score,
                 "fluency_score": pronunciation_result.fluency_score,
+                "mispronunciation_words": mispronunciation_words,
             }
         elif result.reason == speechsdk.ResultReason.NoMatch:
             return {"error": "No speech could be recognized."}
