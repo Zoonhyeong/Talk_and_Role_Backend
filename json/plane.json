@@ -13,9 +13,15 @@
   "roleplay_setting": {
     "location": "Plane",
     "NPC_role_and_quest": {
-      "Stewardess": "seat guide",
-      "Standing_passenger": "get out of the way",
-      "Sitting_passenger": "moving seats"
+      "Stewardess": {
+        "quest_list": ["seat guide"]
+      },
+      "Standing_passenger": {
+        "quest_list": ["get out of the way"]
+      },
+      "Sitting_passenger": {
+        "quest_list": ["move the seat"]
+      }
     },
     "user_role": "Passenger"
   }
