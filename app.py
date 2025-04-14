@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from service.pronunciation_evaluation import PronunciationEvaluator
 from service.speech_to_text import SpeechToTextConverter
 from service.gpt_evaluation import GptEvaluation
+from service.text_to_speech import TextToSpeechConverter
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
@@ -14,6 +15,7 @@ load_dotenv()
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 service_region = os.getenv("AZURE_SERVICE_REGION")
+tts_subscription_key = os.getenv("AZURE_TTS_SUBSCRIPTION_KEY")
 
 history = []
 system_prompt = {
@@ -101,14 +103,14 @@ system_prompt = {
                             - average_grammar_score is calculated from all summaries.
                             - learning_rating:
                             A: ≥ 90
-                            B: 80–89
-                            C: 70–79
-                            D: 60–69
+                            B: 80-89
+                            C: 70-79
+                            D: 60-69
                             F: < 60
                             - Summarize improvements across quests.
                             - Return feedback_lesson_complete in native_language.
 
-                            [Response Format Summary – Main]
+                            [Response Format Summary - Main]
                             {
                                 "main_response":{
                                     "user_profile": {
@@ -125,7 +127,7 @@ system_prompt = {
                                         {
                                             "npc": "[NPC sentence]",
                                             "user": "[User reply]",
-                                            "grammar_score": 0–100,
+                                            "grammar_score": 0-100,
                                             "feedback": "[Feedback in user's native language]",
                                             "follow_up_count": 0
                                         }
@@ -140,7 +142,7 @@ system_prompt = {
                             - This rule must always be followed.
 
 
-                            [Response Format Summary – On Quest Completion]
+                            [Response Format Summary - On Quest Completion]
                             {
                             "completed_quest_summary": {
                                 "current_npc": "[NPC name]",
@@ -149,12 +151,12 @@ system_prompt = {
                                 {
                                     "npc": "[NPC line]",
                                     "user": "[User reply]",
-                                    "grammar_score": 0–100,
+                                    "grammar_score": 0-100,
                                     "feedback": "[Feedback in user's native language]",
                                     "follow_up_count": 0
                                 }
                                 ],
-                                "average_grammar_score": 0–100,
+                                "average_grammar_score": 0-100,
                                 "learning_rating": "A / B / C / D / F",
                                 "feedback_complete": {
                                 "native_language": "[User's native_language]",
@@ -173,7 +175,7 @@ system_prompt = {
                             }
                             }
 
-                            [Response Format Summary – On Quest Failure]
+                            [Response Format Summary - On Quest Failure]
                             {
                             "failed_quest_summary": {
                                 "current_npc": "[NPC name]",
@@ -182,12 +184,12 @@ system_prompt = {
                                 {
                                     "npc": "[NPC line]",
                                     "user": "[User reply]",
-                                    "grammar_score": 0–100,
+                                    "grammar_score": 0-100,
                                     "feedback": "[Feedback in native_language]",
                                     "follow_up_count": 1
                                 }
                                 ],
-                                "average_grammar_score": 0–100,
+                                "average_grammar_score": 0-100,
                                 "learning_rating": "A / B / C / D / F",
                                 "feedback_failed": {
                                 "native_language": "[User's native_language]",
@@ -196,12 +198,12 @@ system_prompt = {
                             }
                             }
 
-                            [Response Format Summary – Lesson Summary]
+                            [Response Format Summary - Lesson Summary]
                             (Only when { "generate_lesson_summary": true } is received and all summaries are passed in)
                             {
                             "lesson_summary": {
                                 "quest_summaries": [ ... ],
-                                "average_grammar_score": 0–100,
+                                "average_grammar_score": 0-100,
                                 "learning_rating": "A / B / C / D / F",
                                 "feedback_lesson_complete": {
                                 "native_language": "[User's native_language]",
@@ -245,7 +247,7 @@ async def evaluate_pronunciation(reference_text: str, file: UploadFile):
     }
 
 # STT 변환
-converter = SpeechToTextConverter(subscription_key, service_region)
+sst_converter = SpeechToTextConverter(subscription_key, service_region)
 
 @app.post("/convert-speech-to-text/")
 async def convert_speech_to_text(file: UploadFile = File(...)):
@@ -256,7 +258,7 @@ async def convert_speech_to_text(file: UploadFile = File(...)):
         buffer.write(await file.read())
 
     # 음성 인식 수행
-    transcription = await converter.convert_speech_to_text(file_location)
+    transcription = await sst_converter.convert_speech_to_text(file_location)
 
     # 임시 파일 삭제
     os.remove(file_location)
@@ -265,6 +267,18 @@ async def convert_speech_to_text(file: UploadFile = File(...)):
 
 class TextEvaluationRequest(BaseModel):
     text: str
+
+# TTS 변환
+tts_converter = TextToSpeechConverter(subscription_key, service_region)
+
+@app.post("/convert-text-to-speech/")
+async def convert_text_to_speech(input_text: str):
+    output_file_path = "./output_speech.wav"  # 출력 파일 경로 설정
+
+    # 텍스트 음성 변환 수행
+    result = tts_converter.convert_text_to_speech(input_text, output_file_path)
+
+    return result
 
 # GPT -> 문법 평가
 gpt_evaluator = GptEvaluation()
@@ -314,6 +328,7 @@ async def test_evaluate_text(request: TextEvaluationRequest, pronunciation_score
         evaluation_text = history
         # print(evaluation_text)
         completion = gpt_evaluator.test_evaluate_text(evaluation_text)
+        next_npc_conversation = ""
 
         # print(completion)
         history.append({"role":"assistant", "content":[{"type":"text","text":completion.to_json()}]})
@@ -323,7 +338,9 @@ async def test_evaluate_text(request: TextEvaluationRequest, pronunciation_score
         if "main_response" in _next:
             if "conversation" in _next.get("main_response"):
                 print("next_npc_ :", _next["main_response"]["conversation"][-1]["npc"])
-
+                next_npc_conversation = _next["main_response"]["conversation"][-1]["npc"]
+                tts_file_name = await convert_text_to_speech(next_npc_conversation)
+        
         return {
             "evaluation": completion
         }
