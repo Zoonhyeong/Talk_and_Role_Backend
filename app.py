@@ -269,7 +269,7 @@ class TextEvaluationRequest(BaseModel):
     text: str
 
 # TTS 변환
-tts_converter = TextToSpeechConverter(subscription_key, service_region)
+tts_converter = TextToSpeechConverter(tts_subscription_key, service_region)
 
 @app.post("/convert-text-to-speech/")
 async def convert_text_to_speech(input_text: str):
