@@ -313,7 +313,7 @@ async def test_evaluate_text(request: TextEvaluationRequest, pronunciation_score
         history.append({"role":"user", "content":[{"type":"text","text":request.text}]})
         evaluation_text = history
         # print(evaluation_text)
-        completion = gpt_evaluator.evaluate_text(evaluation_text)
+        completion = gpt_evaluator.test_evaluate_text(evaluation_text)
 
         # print(completion)
         history.append({"role":"assistant", "content":[{"type":"text","text":completion.to_json()}]})
