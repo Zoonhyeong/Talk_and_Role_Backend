@@ -19,6 +19,7 @@
         "request for amenity"
       ]
     },
+    "order_of_NPC_role": ["Front Desk", "Front Desk", "Front Desk"],
     "user_role": "Guest"
   }
 }

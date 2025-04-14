@@ -29,6 +29,7 @@
         "quest_list": ["get a table assignment", "make a payment"]
       }
     },
+    "order_of_NPC_role": ["Owner", "Waiter", "Owner"],
     "user_role": "Customer"
   }
 }

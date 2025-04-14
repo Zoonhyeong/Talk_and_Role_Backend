@@ -23,6 +23,11 @@
         "quest_list": ["move the seat"]
       }
     },
+    "order_of_NPC_role": [
+      "Stewardess",
+      "Standing_passenger",
+      "Sitting_passenger"
+    ],
     "user_role": "Passenger"
   }
 }

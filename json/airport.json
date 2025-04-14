@@ -13,9 +13,10 @@
   "roleplay_setting": {
     "location": "Airport",
     "NPC_role_and_quest": {
-      "Immigration_officer": "immigration conversation",
-      "Taxi_driver": "destination conversation"
+      "Immigration_officer": ["immigration conversation"],
+      "Taxi_driver": ["destination conversation"]
     },
+    "order_of_NPC_role": ["Immigration_officer", "Taxi_driver"],
     "user_role": "Passenger"
   }
 }
