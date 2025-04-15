@@ -34,14 +34,6 @@ class PronunciationEvaluator:
                 if word_info.error_type == "Mispronunciation":
                     mispronunciation_words.append(word_info.word)
 
-                # if "Intonation" in word_info.pronunciation_assessment.feedback.prosody:
-                #     intonation_data.append({
-                #         "word": word_info.word,
-                #         "intonation": word_info.pronunciation_assessment.feedback.prosody["Intonation"]
-                #     })
-                # print(intonation_data)
-
-            # 결과 출력
             return {
                 "recognized": result.text,
                 "pronunciation_score": pronunciation_result.pronunciation_score,
