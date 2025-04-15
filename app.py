@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 import os
 from pydantic import BaseModel
 from service.pronunciation_evaluation import PronunciationEvaluator
@@ -8,7 +8,6 @@ from service.text_to_speech import TextToSpeechConverter
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 from prompt import system_prompt
-
 import json
 
 app = FastAPI()
@@ -25,7 +24,7 @@ sys_prompt = system_prompt
 evaluator = PronunciationEvaluator(subscription_key, service_region)
 
 @app.post("/evaluate-pronunciation/")
-async def evaluate_pronunciation(reference_text: str, file: UploadFile):
+async def evaluate_pronunciation(reference_text: str = Form(...), file: UploadFile = File(...)):
     file_location = f"./{file.filename}"
     
     # 파일 저장
