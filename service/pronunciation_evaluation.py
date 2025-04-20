@@ -17,7 +17,6 @@ class PronunciationEvaluator:
         recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
         pronunciation_config.apply_to(recognizer)
 
-        print("Evaluating pronunciation from audio file...")
         result = recognizer.recognize_once()
 
         # 결과 처리
@@ -25,8 +24,6 @@ class PronunciationEvaluator:
             pronunciation_result = speechsdk.PronunciationAssessmentResult(result)
             
             mispronunciation_words = []
-            monotone_words = []
-            intonation_data = []
 
             # Words 리스트를 순회
             for word_info in pronunciation_result.words:
@@ -40,7 +37,7 @@ class PronunciationEvaluator:
                 "fluency_score": pronunciation_result.fluency_score,
                 "mispronunciation_words": mispronunciation_words,
             }
-        elif result.reason == speechsdk.ResultReason.NoMatch:
+        elif result.reason == speechsdk.ResultReason.NoMatch:   
             return {"error": "No speech could be recognized."}
         elif result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = result.cancellation_details

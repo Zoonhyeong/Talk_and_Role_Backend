@@ -11,7 +11,6 @@ class SpeechToTextConverter:
         recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
 
         # 음성 인식 수행
-        print("Converting speech to text...")
         result = recognizer.recognize_once()
 
         # 결과 처리
